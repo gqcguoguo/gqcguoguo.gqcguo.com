@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GuoGuo博客</title>
+    <title>GuoGuo博客 - 互动版</title>
     <style>
         * {
             margin: 0;
@@ -23,11 +23,18 @@
             color: white;
             padding: 2rem 0;
             text-align: center;
+            position: relative;
         }
         
         .logo {
             font-size: 2.5rem;
             margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
         }
         
         .tagline {
@@ -48,6 +55,7 @@
         
         nav ul li {
             margin: 0 1rem;
+            position: relative;
         }
         
         nav ul li a {
@@ -55,10 +63,33 @@
             text-decoration: none;
             font-size: 1.1rem;
             transition: color 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
         }
         
         nav ul li a:hover {
             color: #f39c12;
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .search-container {
+            position: absolute;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .search-box {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 20px;
+            outline: none;
+            width: 200px;
+            transition: width 0.3s;
+        }
+        
+        .search-box:focus {
+            width: 250px;
         }
         
         .container {
@@ -83,18 +114,27 @@
             margin-bottom: 2rem;
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .post:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         
         .post-title {
             font-size: 1.5rem;
             margin-bottom: 0.5rem;
             color: #2c3e50;
+            cursor: pointer;
         }
         
         .post-meta {
             color: #7f8c8d;
             font-size: 0.9rem;
             margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
         }
         
         .post-content {
@@ -104,6 +144,96 @@
         .read-more {
             color: #3498db;
             text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+            transition: color 0.3s;
+        }
+        
+        .read-more:hover {
+            color: #2980b9;
+        }
+        
+        .post-actions {
+            display: flex;
+            margin-top: 1rem;
+            border-top: 1px solid #eee;
+            padding-top: 1rem;
+        }
+        
+        .like-btn, .share-btn, .comment-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+            color: #7f8c8d;
+            transition: color 0.3s;
+        }
+        
+        .like-btn:hover, .share-btn:hover, .comment-btn:hover {
+            color: #3498db;
+        }
+        
+        .like-btn.liked {
+            color: #e74c3c;
+        }
+        
+        .comment-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+            display: none;
+        }
+        
+        .comment-form {
+            margin-bottom: 1rem;
+        }
+        
+        .comment-input {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .submit-comment {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .submit-comment:hover {
+            background-color: #2980b9;
+        }
+        
+        .comments-list {
+            margin-top: 1rem;
+        }
+        
+        .comment {
+            padding: 1rem;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        
+        .comment-author {
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+        
+        .comment-date {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            margin-bottom: 0.5rem;
         }
         
         .sidebar-widget {
@@ -122,6 +252,42 @@
             color: #2c3e50;
         }
         
+        .popular-posts li {
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px dashed #eee;
+        }
+        
+        .popular-posts a {
+            color: #3498db;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .popular-posts a:hover {
+            color: #2980b9;
+        }
+        
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .tag {
+            background-color: #e0e0e0;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .tag:hover {
+            background-color: #3498db;
+            color: white;
+        }
+        
         footer {
             background-color: #2c3e50;
             color: white;
@@ -129,17 +295,102 @@
             padding: 2rem 0;
             margin-top: 2rem;
         }
+        
+        .social-links {
+            margin: 1rem 0;
+        }
+        
+        .social-links a {
+            color: white;
+            margin: 0 0.5rem;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+        
+        .social-links a:hover {
+            color: #f39c12;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background-color: #2ecc71;
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transform: translateX(150%);
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: #3498db;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+        }
+        
+        .back-to-top:hover {
+            background-color: #2980b9;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            main {
+                margin-right: 0;
+                margin-bottom: 2rem;
+            }
+            
+            .search-container {
+                position: static;
+                transform: none;
+                margin-top: 1rem;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="notification" id="notification">感谢您的点赞！</div>
+    
     <header>
-        <div class="logo">GuoGuo博客</div>
+        <div class="logo" id="logo">GuoGuo博客</div>
         <div class="tagline">分享知识，记录生活</div>
+        <div class="search-container">
+            <input type="text" class="search-box" placeholder="搜索文章...">
+        </div>
     </header>
     
     <nav>
         <ul>
-            <li><a href="#">首页</a></li>
+            <li><a href="#" class="active">首页</a></li>
             <li><a href="#">技术</a></li>
             <li><a href="#">生活</a></li>
             <li><a href="#">旅行</a></li>
@@ -149,24 +400,85 @@
     
     <div class="container">
         <main>
-            <article class="post">
+            <article class="post" id="post1">
                 <h2 class="post-title">我的第一篇博客文章</h2>
-                <div class="post-meta">发布于 2023年5月15日 | 分类: <a href="#">技术</a></div>
+                <div class="post-meta">发布于 2023年5月15日 | 分类: <a href="#">技术</a> | <span id="viewCount1">256</span> 次阅读</div>
                 <div class="post-content">
                     <p>欢迎来到GuoGuo博客！这是我的第一篇博客文章。在这里，我将分享我的技术学习心得、生活感悟和旅行见闻。</p>
                     <p>博客刚刚建立，还有很多内容需要完善。我会定期更新文章，希望能和大家一起交流学习。</p>
                 </div>
                 <a href="#" class="read-more">阅读更多 &raquo;</a>
+                
+                <div class="post-actions">
+                    <button class="like-btn" onclick="toggleLike('post1')">
+                        <span id="likeIcon1">❤</span> <span id="likeCount1">42</span>
+                    </button>
+                    <button class="share-btn" onclick="sharePost('post1')">
+                        <span>🔗</span> 分享
+                    </button>
+                    <button class="comment-btn" onclick="toggleComments('post1')">
+                        <span>💬</span> <span id="commentCount1">5</span> 条评论
+                    </button>
+                </div>
+                
+                <div class="comment-section" id="comments1">
+                    <div class="comment-form">
+                        <h4>发表评论</h4>
+                        <textarea class="comment-input" placeholder="写下你的评论..."></textarea>
+                        <button class="submit-comment" onclick="addComment('post1')">提交评论</button>
+                    </div>
+                    
+                    <div class="comments-list">
+                        <div class="comment">
+                            <div class="comment-author">张三</div>
+                            <div class="comment-date">2023-05-16 10:30</div>
+                            <div class="comment-text">写得很好，期待更多内容！</div>
+                        </div>
+                        <div class="comment">
+                            <div class="comment-author">李四</div>
+                            <div class="comment-date">2023-05-15 18:45</div>
+                            <div class="comment-text">欢迎加入博客圈！</div>
+                        </div>
+                    </div>
+                </div>
             </article>
             
-            <article class="post">
+            <article class="post" id="post2">
                 <h2 class="post-title">HTML和CSS入门指南</h2>
-                <div class="post-meta">发布于 2023年5月10日 | 分类: <a href="#">技术</a></div>
+                <div class="post-meta">发布于 2023年5月10日 | 分类: <a href="#">技术</a> | <span id="viewCount2">189</span> 次阅读</div>
                 <div class="post-content">
                     <p>HTML和CSS是构建网页的基础技术。HTML负责网页的结构，CSS负责网页的样式。</p>
                     <p>学习HTML和CSS并不难，但需要多加练习。建议从简单的页面开始，逐步增加复杂度。</p>
                 </div>
                 <a href="#" class="read-more">阅读更多 &raquo;</a>
+                
+                <div class="post-actions">
+                    <button class="like-btn" onclick="toggleLike('post2')">
+                        <span id="likeIcon2">❤</span> <span id="likeCount2">28</span>
+                    </button>
+                    <button class="share-btn" onclick="sharePost('post2')">
+                        <span>🔗</span> 分享
+                    </button>
+                    <button class="comment-btn" onclick="toggleComments('post2')">
+                        <span>💬</span> <span id="commentCount2">3</span> 条评论
+                    </button>
+                </div>
+                
+                <div class="comment-section" id="comments2">
+                    <div class="comment-form">
+                        <h4>发表评论</h4>
+                        <textarea class="comment-input" placeholder="写下你的评论..."></textarea>
+                        <button class="submit-comment" onclick="addComment('post2')">提交评论</button>
+                    </div>
+                    
+                    <div class="comments-list">
+                        <div class="comment">
+                            <div class="comment-author">王五</div>
+                            <div class="comment-date">2023-05-11 09:15</div>
+                            <div class="comment-text">很实用的入门指南！</div>
+                        </div>
+                    </div>
+                </div>
             </article>
         </main>
         
@@ -174,30 +486,191 @@
             <div class="sidebar-widget">
                 <h3 class="widget-title">关于我</h3>
                 <p>你好，我是GuoGuo，一名热爱技术和写作的博主。欢迎来到我的个人博客！</p>
+                <button onclick="showContactForm()" style="margin-top: 1rem; background-color: #3498db; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">联系我</button>
             </div>
             
             <div class="sidebar-widget">
-                <h3 class="widget-title">分类</h3>
-                <ul>
-                    <li><a href="#">技术 (5)</a></li>
-                    <li><a href="#">生活 (3)</a></li>
-                    <li><a href="#">旅行 (2)</a></li>
+                <h3 class="widget-title">热门文章</h3>
+                <ul class="popular-posts">
+                    <li><a href="#">我的第一篇博客文章</a></li>
+                    <li><a href="#">HTML和CSS入门指南</a></li>
+                    <li><a href="#">JavaScript基础教程</a></li>
+                    <li><a href="#">我的旅行日记：云南之旅</a></li>
                 </ul>
+            </div>
+            
+            <div class="sidebar-widget">
+                <h3 class="widget-title">标签云</h3>
+                <div class="tags-container">
+                    <span class="tag">HTML</span>
+                    <span class="tag">CSS</span>
+                    <span class="tag">JavaScript</span>
+                    <span class="tag">旅行</span>
+                    <span class="tag">生活</span>
+                    <span class="tag">技术</span>
+                    <span class="tag">编程</span>
+                </div>
             </div>
             
             <div class="sidebar-widget">
                 <h3 class="widget-title">订阅</h3>
                 <p>订阅我的博客，获取最新文章通知：</p>
-                <form>
-                    <input type="email" placeholder="您的邮箱地址" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem;">
+                <form id="subscribeForm">
+                    <input type="email" id="subscribeEmail" placeholder="您的邮箱地址" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem;" required>
                     <button type="submit" style="width: 100%; padding: 0.5rem; background-color: #3498db; color: white; border: none; cursor: pointer;">订阅</button>
                 </form>
             </div>
         </aside>
     </div>
     
+    <div class="back-to-top" id="backToTop">↑</div>
+    
     <footer>
+        <div class="social-links">
+            <a href="#" title="微博">📱</a>
+            <a href="#" title="微信">💬</a>
+            <a href="#" title="GitHub">🐱</a>
+            <a href="#" title="Twitter">🐦</a>
+        </div>
         <p>&copy; 2023 GuoGuo博客. 保留所有权利.</p>
     </footer>
+    
+    <script>
+        // 点赞功能
+        function toggleLike(postId) {
+            const likeBtn = document.querySelector(`#${postId} .like-btn`);
+            const likeIcon = document.getElementById(`likeIcon${postId.slice(-1)}`);
+            const likeCount = document.getElementById(`likeCount${postId.slice(-1)}`);
+            
+            if (likeBtn.classList.contains('liked')) {
+                likeBtn.classList.remove('liked');
+                likeIcon.textContent = '❤';
+                likeCount.textContent = parseInt(likeCount.textContent) - 1;
+            } else {
+                likeBtn.classList.add('liked');
+                likeIcon.textContent = '♥';
+                likeCount.textContent = parseInt(likeCount.textContent) + 1;
+                showNotification('感谢您的点赞！');
+            }
+        }
+        
+        // 显示/隐藏评论功能
+        function toggleComments(postId) {
+            const commentSection = document.getElementById(`comments${postId.slice(-1)}`);
+            if (commentSection.style.display === 'block') {
+                commentSection.style.display = 'none';
+            } else {
+                commentSection.style.display = 'block';
+                // 模拟增加阅读量
+                const viewCount = document.getElementById(`viewCount${postId.slice(-1)}`);
+                viewCount.textContent = parseInt(viewCount.textContent) + 1;
+            }
+        }
+        
+        // 添加评论功能
+        function addComment(postId) {
+            const commentInput = document.querySelector(`#${postId} .comment-input`);
+            const commentText = commentInput.value.trim();
+            
+            if (commentText) {
+                const commentsList = document.querySelector(`#${postId} .comments-list`);
+                const now = new Date();
+                const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                
+                const newComment = document.createElement('div');
+                newComment.className = 'comment';
+                newComment.innerHTML = `
+                    <div class="comment-author">匿名用户</div>
+                    <div class="comment-date">${dateStr}</div>
+                    <div class="comment-text">${commentText}</div>
+                `;
+                
+                commentsList.prepend(newComment);
+                commentInput.value = '';
+                
+                // 更新评论计数
+                const commentCount = document.getElementById(`commentCount${postId.slice(-1)}`);
+                commentCount.textContent = parseInt(commentCount.textContent) + 1;
+                
+                showNotification('评论已发布！');
+            }
+        }
+        
+        // 分享功能
+        function sharePost(postId) {
+            // 在实际应用中，这里可以调用社交媒体API
+            showNotification('已复制文章链接到剪贴板！');
+        }
+        
+        // 显示通知
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 返回顶部按钮
+        const backToTopBtn = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+        });
+        
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 订阅表单
+        document.getElementById('subscribeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('subscribeEmail').value;
+            if (email) {
+                showNotification(`感谢订阅！我们将发送更新到 ${email}`);
+                this.reset();
+            }
+        });
+        
+        // 联系我按钮
+        function showContactForm() {
+            // 在实际应用中，这里可以显示一个联系表单或弹窗
+            showNotification('请联系我们：contact@guoguo.blog');
+        }
+        
+        // 点击logo动画
+        document.getElementById('logo').addEventListener('click', function() {
+            this.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 300);
+        });
+        
+        // 标签点击效果
+        document.querySelectorAll('.tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                showNotification(`正在筛选标签: ${this.textContent}`);
+            });
+        });
+        
+        // 导航菜单激活状态
+        document.querySelectorAll('nav ul li a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector('nav ul li a.active').classList.remove('active');
+                this.classList.add('active');
+                showNotification(`正在加载: ${this.textContent}`);
+            });
+        });
+    </script>
 </body>
 </html>
